@@ -11,9 +11,6 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := ./dependencies/GLFW/include/ ./dependencies/GLEW/include/ 
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-LIB_DIRS := ./dependencies/GLFW/lib-vc2017/ ./dependencies/GLEW/lib64/
-LIB_FLAGS := $(addprefix -L,$(LIB_DIRS))
-
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -g -std=c++11
 LDFLAGS = $(LIB_FLAGS)  
 LDLIBS = -lGLEW -lGLU -lGL -lglfw
@@ -21,8 +18,7 @@ CC = g++
 CXX = g++
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
-
+	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS) 
 # assembly
 $(BUILD_DIR)/%.s.o: %.s
 	$(MKDIR_P) $(dir $@)
