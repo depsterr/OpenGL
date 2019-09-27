@@ -128,6 +128,10 @@ int main(){
 		return -1;
 	}
 
+	glfwSwapInterval(1); //Vsync enabled
+
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
 	glfwMakeContextCurrent(window); //set window to the current context
 
 	if(glewInit() != GLEW_OK){ //init GLEW
@@ -160,9 +164,9 @@ int main(){
 	unsigned int buffer;
 	glGenBuffers(1, &buffer); //create one buffer and load ID of it into buffer var
 	glBindBuffer(GL_ARRAY_BUFFER, buffer); //set type of buffer to array
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, positions, GL_STATIC_DRAW); //bind data to buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * 2, positions, GL_STATIC_DRAW); //bind data to buffer
 
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); //explain buffer data: index 0, 2 cause 2d, float data, doesn't need to be normalized, size per vertex, first attribute, therefore 0 (no offset from start)
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); //explain buffer data: index 0, 2 cause 2d, float data, doesn't need to be normalized, size per vertex, first attribute, therefore 0 (no offset from start) binds buffer to VAO
 	glEnableVertexAttribArray(0); //enable vertex attrib array ID 0
 	
 	//index buffer to reduce amout of indicies used
@@ -184,15 +188,25 @@ int main(){
 	}
 	glUniform4f(location, 0.8f, 0.0f, 0.5f, 1.0f);
 
+	glBindVertexArray(0);
+	glUseProgram(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 	float r = 0.0f;
 	float increment = 0.05f;
 
-	while(!glfwWindowShouldClose(window)){ //loop for program
+	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS){ //loop for program
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 
+		glUseProgram(shader);
 		glUniform4f(location, r, 0.0f, 0.5f, 1.0f);
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //draw triangles with 6 total verticies
 
 		if(r > 1.0f)
