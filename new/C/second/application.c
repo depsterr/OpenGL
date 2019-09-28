@@ -139,7 +139,7 @@ int main(){
 		return -1;
 	}
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
 	glDebugMessageCallback(MessageCallback, 0);
 
