@@ -3,33 +3,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string.h>
+#include "renderer.h"
+#include "vertexBuffer.h"
+#include "indexBuffer.h"
+
 
 #define W_WIDTH 640
 #define W_HEIGHT 480
 
-void GLAPIENTRY MessageCallback( GLenum source,
-                 GLenum type,
-                 GLuint id,
-                 GLenum severity,
-                 GLsizei length,
-                 const GLchar* message,
-                 const void* userParam ) {
-    (void)id;(void)source;(void)length;(void)userParam;
-    printf("OpenGL callback: %s type = %d, severity = %d, message = %s\n",
-        ( type == GL_DEBUG_TYPE_ERROR ? "GL_DEBUG_TYPE_ERROR" : "" ),
-        type, severity, message );
-}
-
-static void GLClearError(){
-	while(glGetError() != GL_NO_ERROR);
-}
-
-static void GLCheckError(){
-	GLenum error;
-	while(error = glGetError()){
-		printf("OpenGL error: %d\n", error);
-	}
-}
 
 static unsigned int CompileShader(unsigned int type, const char source[]){ //function to compile the shader, that way we do not have to write the same code twice in CreateShader()
 	unsigned int id = glCreateShader(type); //create a shader of the given type, the funciton will return an ID that we use to adress the shader program
@@ -146,10 +127,10 @@ int main(){
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
 	float positions[] = { //the vertecies for the square we want to render
-		-0.5f, -0.5f,
-		 0.5f, -0.5f,
-		 0.5f,  0.5f,
-		-0.5f,  0.5f,
+		-1.0f, -1.0f,
+		 1.0f, -1.0f,
+		 1.0f,  1.0f,
+		-1.0f,  1.0f,
 	};
 
 	unsigned int indicies[] = { //define positions to use for rendering two triangles to make a square
@@ -161,21 +142,16 @@ int main(){
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	unsigned int buffer;
-	glGenBuffers(1, &buffer); //create one buffer and load ID of it into buffer var
-	glBindBuffer(GL_ARRAY_BUFFER, buffer); //set type of buffer to array
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * 2, positions, GL_STATIC_DRAW); //bind data to buffer
+	struct VertexBuffer vb;
+	initVertexBuffer(&vb, positions, sizeof(float) * 4 * 2);
 
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); //explain buffer data: index 0, 2 cause 2d, float data, doesn't need to be normalized, size per vertex, first attribute, therefore 0 (no offset from start) binds buffer to VAO
 	glEnableVertexAttribArray(0); //enable vertex attrib array ID 0
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); //explain buffer data: index 0, 2 cause 2d, float data, doesn't need to be normalized, size per vertex, first attribute, therefore 0 (no offset from start) binds buffer to VAO
 	
 	//index buffer to reduce amout of indicies used
 
-	unsigned int ibo; //index buffer object
-	glGenBuffers(1, &ibo); //create one buffer and load ID of it into ibo var
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); //set type of buffer to element array and bind it
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indicies, GL_STATIC_DRAW); //bind data to buffer
-
+	struct IndexBuffer ib;
+	initIndexBuffer(&ib, indicies, 6);
 	
 	//create shader from source
 	
@@ -196,7 +172,6 @@ int main(){
 	float r = 0.0f;
 	float increment = 0.05f;
 
-
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS){ //loop for program
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -206,7 +181,7 @@ int main(){
 		glUniform4f(location, r, 0.2f, 0.3f, 1.0f);
 
 		glBindVertexArray(vao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		bindIndexBuffer(ib);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //draw triangles with 6 total verticies
 
