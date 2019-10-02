@@ -1,5 +1,8 @@
 #pragma once
-#include "vertexBuffer.c"
+
+struct VertexBuffer{
+	unsigned int m_rendererID;
+};
 
 void initVertexBuffer(struct VertexBuffer *vertexbuffer, const void* data, unsigned int size);
 void deleteVertexBuffer(struct VertexBuffer vertexbuffer);

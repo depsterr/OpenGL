@@ -1,10 +1,6 @@
 #include "vertexBuffer.h"
 #include "renderer.h"
 
-struct VertexBuffer{
-	unsigned int m_rendererID;
-};
-
 void initVertexBuffer(struct VertexBuffer *vertexbuffer, const void* data, unsigned int size){
 	glGenBuffers(1, &vertexbuffer->m_rendererID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer->m_rendererID);
