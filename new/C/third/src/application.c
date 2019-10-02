@@ -6,6 +6,7 @@
 #include "renderer.h"
 #include "vertexBuffer.h"
 #include "indexBuffer.h"
+#include "vertexArray.h"
 
 
 #define W_WIDTH 640
@@ -138,17 +139,18 @@ int main(){
 		2, 3, 0
 	};
 
-	unsigned int vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	struct VertexArray vao;
+	initVertexArray(&vao);
 
 	struct VertexBuffer vb;
 	initVertexBuffer(&vb, positions, sizeof(float) * 4 * 2);
 
-	glEnableVertexAttribArray(0); //enable vertex attrib array ID 0
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0); //explain buffer data: index 0, 2 cause 2d, float data, doesn't need to be normalized, size per vertex, first attribute, therefore 0 (no offset from start) binds buffer to VAO
-	
-	//index buffer to reduce amout of indicies used
+	struct VertexBufferLayout vbl;
+	initVertexBufferLayout(&vbl);
+
+	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
+
+	vertexArrayAddBuffer(&vao, &vb, &vbl);
 
 	struct IndexBuffer ib;
 	initIndexBuffer(&ib, indicies, 6);
@@ -159,9 +161,6 @@ int main(){
 	glUseProgram(shader);
 
 	int location = glGetUniformLocation(shader, "u_Color"); //get id for u_Color to be able to send uniform data
-	if(location != -1){
-		printf("location -1\n");
-	}
 	glUniform4f(location, 0.8f, 0.0f, 0.5f, 1.0f);
 
 	glBindVertexArray(0);
@@ -175,12 +174,12 @@ int main(){
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS){ //loop for program
 
 		glClear(GL_COLOR_BUFFER_BIT);
-		
+
 
 		glUseProgram(shader);
 		glUniform4f(location, r, 0.2f, 0.3f, 1.0f);
 
-		glBindVertexArray(vao);
+		bindVertexArray(vao);
 		bindIndexBuffer(ib);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); //draw triangles with 6 total verticies

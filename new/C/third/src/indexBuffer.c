@@ -1,11 +1,6 @@
 #include "indexBuffer.h"
 #include "renderer.h"
 
-struct IndexBuffer{
-	unsigned int m_rendererID;
-	unsigned int m_Count;
-};
-
 void initIndexBuffer(struct IndexBuffer *indexbuffer, const unsigned int* data, unsigned int count){
 	indexbuffer->m_Count = count;
 	glGenBuffers(1, &indexbuffer->m_rendererID);

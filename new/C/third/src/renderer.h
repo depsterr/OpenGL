@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GL/glew.h>
-#include "renderer.c"
 
 void GLAPIENTRY MessageCallback( GLenum source,
                  GLenum type,
