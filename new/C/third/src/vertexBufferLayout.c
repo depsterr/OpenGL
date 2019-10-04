@@ -10,12 +10,12 @@ void initVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout){
 //make it so the layout has a pointer to a list that gets longer (malloc, realloc) of VertexBufferElements.
 
 void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal){
+		vertexbufferlayout->count++;
 		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement));
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count].type = inputType;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count].count = count;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count].normalized = normal;
-		vertexbufferlayout->count++;
-		vertexbufferlayout->m_Stride += getSizeOfType(inputType);
+		vertexbufferlayout->m_Stride += getSizeOfType(inputType) * count;
 }
 
 unsigned int getSizeOfType(unsigned int type){ //used to add to the stride
