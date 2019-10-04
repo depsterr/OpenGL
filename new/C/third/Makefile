@@ -3,7 +3,7 @@ PROJECTDIR=build/application.out
 BUILDDIR=.
 CFLAGS= -lglfw -lGLEW -lGL -lGLU
 
-default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o
+default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o
 	$(CC) $(CFLAGS) -o $(PROJECTDIR) $^
 
 indexBuffer.o: src/indexBuffer.c
@@ -19,6 +19,9 @@ vertexBufferLayout.o: src/vertexBufferLayout.c
 	$(CC) $(CFLAGS) -c $^
 
 vertexBuffer.o: src/vertexBuffer.c
+	$(CC) $(CFLAGS) -c $^
+
+shader.o: src/shader.c
 	$(CC) $(CFLAGS) -c $^
 
 clean:
