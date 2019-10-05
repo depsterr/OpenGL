@@ -26,7 +26,7 @@ const void unbindShader(struct Shader shader);
 
 void shaderSetUniform4f(struct Shader *shader, const char name[], float v1, float v2, float v3, float v4); //just sets a vec4
 
-int shaderGetUniformLocation(struct Shader *shader, char name[]); //used to get the location of a uniform from it's name, should be able to somehow remember names values and then if they are not recognised look them up with the GL function
+int shaderGetUniformLocation(struct Shader *shader, const char name[]); //used to get the location of a uniform from it's name, should be able to somehow remember names values and then if they are not recognised look them up with the GL function
 
 void addShaderPath(struct Shader *shader, char filepath[], unsigned int shaderType); //adds one of the shaders to filepath
 
