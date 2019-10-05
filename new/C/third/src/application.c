@@ -89,6 +89,7 @@ int main(){
 
 	unbindVertexArray(vao);
 	unbindShader(shader);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	unbindIndexBuffer(ib);
 
 	float r = 0.0f;

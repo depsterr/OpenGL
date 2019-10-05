@@ -12,9 +12,9 @@ void initVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout){
 void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal){
 		vertexbufferlayout->count++;
 		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement));
-		vertexbufferlayout->m_Elements[vertexbufferlayout->count].type = inputType;
-		vertexbufferlayout->m_Elements[vertexbufferlayout->count].count = count;
-		vertexbufferlayout->m_Elements[vertexbufferlayout->count].normalized = normal;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].type = inputType;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].count = count;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].normalized = normal;
 		vertexbufferlayout->m_Stride += getSizeOfType(inputType) * count;
 }
 

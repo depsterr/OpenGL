@@ -97,10 +97,12 @@ static unsigned int compileShaderSource(unsigned int type, const char source[]){
 		char *message;
 		message = (char *)malloc(length * sizeof(char)); //char[] to get message
 		glGetShaderInfoLog(id, length, &length, message); //get the info from the log
-		printf("Failed to compile %s shader\n", (type == GL_VERTEX_SHADER ? "vertex" : "fragment")); //print which shader it is that failed
+		printf("Failed to compile %sshader\n", (type == GL_VERTEX_SHADER ? "vertex" : "fragment")); //print which shader it is that failed
 		printf("%s\n", message); //print the shader error log
 		free(message); //free up memory
 		return 0; //unsigned, cannot return -1
+	}else{
+		printf("Successfully compiled %sshader\n", (type == GL_VERTEX_SHADER ? "vertex" : "fragment")); //print which shader it is that failed
 	}
 
 	return id; //return id as refrence to created shader
@@ -110,7 +112,7 @@ void shaderSetUniform4f(struct Shader *shader, const char name[], float v1, floa
 	glUniform4f(shaderGetUniformLocation(shader, name), v1, v2, v3, v4);
 }
 
-int shaderGetUniformLocation(struct Shader *shader, char name[]){
+int shaderGetUniformLocation(struct Shader *shader, const char name[]){
 	for(unsigned int n = 0; n < shader->uniformCount; n++){
 		if(strcmp(name, shader->uniforms[n].name)){
 			return shader->uniforms[n].id;
