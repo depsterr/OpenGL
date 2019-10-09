@@ -6,10 +6,17 @@
 #include "renderer.h"
 #include "vertexBuffer.h"
 #include "texture.h"
+#include <cglm/cglm.h>
+#include "cglmExtention.h"
+#include "vendor/nuklear/nuklear.h"
 
 
-#define W_WIDTH 256
-#define W_HEIGHT 256
+#define W_WIDTH 960
+#define W_HEIGHT 540
+#define FOV 100.0f
+#define ASPECT_RATIO W_WIDTH / W_HEIGHT
+#define FARVAL 900.0f
+#define NEARVAL 10.0f
 
 int main(){
 	GLFWwindow* window; //create window obj
@@ -42,6 +49,37 @@ int main(){
 		return -1;
 	}
 
+//  Nuklear UI that can be used for debugging, etc	
+//  enum {EASY, HARD};
+//  static int op = EASY;
+//  static float value = 0.6f;
+//  static int i =  20;
+//  struct nk_context ctx;
+//  int nk_init_default(struct nk_context *ctx, const struct nk_user_font *font);
+//  if (nk_begin(&ctx, "Show", nk_rect(50, 50, 220, 220),
+//      NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_CLOSABLE)) {
+//      // fixed widget pixel width
+//      nk_layout_row_static(&ctx, 30, 80, 1);
+//      if (nk_button_label(&ctx, "button")) {
+//          // event handling
+//      }
+//      // fixed widget window ratio width
+//      nk_layout_row_dynamic(&ctx, 30, 2);
+//      if (nk_option_label(&ctx, "easy", op == EASY)) op = EASY;
+//      if (nk_option_label(&ctx, "hard", op == HARD)) op = HARD;
+//      // custom widget pixel width
+//      nk_layout_row_begin(&ctx, NK_STATIC, 30, 2);
+//      {
+//          nk_layout_row_push(&ctx, 50);
+//          nk_label(&ctx, "Volume:", NK_TEXT_LEFT);
+//          nk_layout_row_push(&ctx, 110);
+//          nk_slider_float(&ctx, 0, &value, 1.0f, 0.1f);
+//      }
+//      nk_layout_row_end(&ctx);
+//  }
+//  nk_end(&ctx);
+	
+
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
 	glDebugMessageCallback(MessageCallback, 0);
@@ -49,10 +87,10 @@ int main(){
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
 	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates
-		-1.0f, -1.0f, 0.0f, 0.0f,
-		 1.0f, -1.0f, 1.0f, 0.0f,
-		 1.0f,  1.0f, 1.0f, 1.0f,
-		-1.0f,  1.0f, 0.0f, 1.0f
+		000.0f, 000.0f, 0.0f, 0.0f,
+		100.0f, 000.0f, 1.0f, 0.0f,
+		100.0f, 100.0f, 1.0f, 1.0f,
+		000.0f, 100.0f, 0.0f, 1.0f
 	};
 
 	unsigned int indicies[] = { //define positions to use for rendering two triangles to make a square
@@ -78,12 +116,25 @@ int main(){
 	vertexArrayAddBuffer(&vao, &vb, &vbl);
 
 	//deleteVertexBufferLayout(&vbl);
-
+	
 	struct IndexBuffer ib;
 	initIndexBuffer(&ib, indicies, 6);
 	
 	//create shader from source
 	
+	vec3 translationA  = {0, 0, 0};
+	vec3 translationB  = {200, 200, 0};
+	
+	mat4 proj;
+	glm_ortho(0.0f, W_WIDTH, 0.0f, W_HEIGHT, -1.0f, 1.0f, proj);
+	mat4 view;
+	glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, (vec3){0, 0, 0}, view);
+	mat4 model;
+	glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, (vec3){200, 200, 0}, model);
+
+	mat4 mvp;
+	glm_mat4_mulN((mat4 *[]){&proj, &view, &model}, 3, mvp);
+
 	struct Shader shader;
 	initShader(&shader);
 	addShaderPath(&shader, "shader/BasicVertex.shader", GL_VERTEX_SHADER);
@@ -94,8 +145,9 @@ int main(){
 	struct Texture texture;
 	initTexture(&texture, "resources/textures/source-test.jpeg");
 	bindTextureID(texture, 0);
-
 	shaderSetUniform1i(&shader, "u_Texture", 0);
+
+	shaderSetUniformMat4f(&shader, "u_MVP", mvp);
 
 	unbindVertexArray(vao);
 	unbindShader(shader);
@@ -105,23 +157,19 @@ int main(){
 	float increment = 0.05f;
 
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS){ //loop for program
-
 		rendererClear();
 
-		bindShader(shader);
-		shaderSetUniform4f(&shader, "u_Color", r, 0.2f, 0.3f, 1.0f);
+		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationA, model);
+		glm_mat4_mulN((mat4 *[]){&proj, &view, &model}, 3, mvp);
+		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
+		rendererDraw(vao, ib, shader);
 
+		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationB, model);
+		glm_mat4_mulN((mat4 *[]){&proj, &view, &model}, 3, mvp);
+		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
 		rendererDraw(vao, ib, shader);
 		
-		if(r > 1.0f)
-			increment = -0.05;
-		if(r < 0.0f)
-			increment =  0.05;
-		r += increment;
-
-
 		glfwSwapBuffers(window); //swap the buffer
-
 		glfwPollEvents(); //poll for events
 	}
 

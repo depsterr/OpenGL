@@ -1,10 +1,11 @@
 CC=gcc
 PROJECTDIR=build/application.out
 BUILDDIR=.
-CFLAGS= -lglfw -lGLEW -lGL -lGLU -lm
+CFLAGS= -lglfw -lGLEW -lGL -lGLU -lm -lcglm
 
-default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o stb_image.o texture.o
+default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o stb_image.o texture.o nuklear.o
 	$(CC) -o $(PROJECTDIR) $^ $(CFLAGS)
+	make clean
 
 indexBuffer.o: src/indexBuffer.c
 	$(CC) -c $^ $(CFLAGS)
@@ -30,5 +31,12 @@ stb_image.o: src/vendor/stb_image/stb_image.c
 texture.o: src/texture.c
 	$(CC) -c $^ $(CFLAGS)
 
+nuklear.o: src/vendor/nuklear/nuklear.c
+	$(CC) -c $^ $(CFLAGS)
+
 clean:
 	rm -f *.o
+
+run:
+	make default
+	./build/application.out
