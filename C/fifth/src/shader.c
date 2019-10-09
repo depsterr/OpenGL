@@ -42,7 +42,7 @@ const void unbindShader(struct Shader shader){
 	glUseProgram(0);
 }
 
-void addShaderPath(struct  Shader *shader, char filepath[], unsigned int shaderType){
+void addShaderPath(struct Shader *shader, char filepath[], unsigned int shaderType){
 	unsigned int pathsize = 0; 
 	for(;filepath[pathsize] != '\0'; pathsize++);
 	pathsize++; //account for \0 char
@@ -118,11 +118,18 @@ static unsigned int compileShaderSource(unsigned int type, const char source[]){
 }
 
 void shaderSetUniform4f(struct Shader *shader, const char name[], float v1, float v2, float v3, float v4){
+	bindShader(*shader);
 	glUniform4f(shaderGetUniformLocation(shader, name), v1, v2, v3, v4);
 }
 
 void shaderSetUniform1i(struct Shader *shader, const char name[], int v1){
+	bindShader(*shader);
 	glUniform1i(shaderGetUniformLocation(shader, name), v1);
+}
+
+void shaderSetUniformMat4f(struct Shader *shader, const char name[], const mat4 matrix){
+	bindShader(*shader);
+	glUniformMatrix4fv(shaderGetUniformLocation(shader, name), 1, GL_FALSE, &matrix[0][0]);
 }
 
 int shaderGetUniformLocation(struct Shader *shader, const char name[]){
