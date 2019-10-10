@@ -40,3 +40,6 @@ clean:
 run:
 	make default
 	./build/application.out
+
+no-cleanup: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o stb_image.o texture.o nuklear.o
+	$(CC) -o $(PROJECTDIR) $^ $(CFLAGS)
