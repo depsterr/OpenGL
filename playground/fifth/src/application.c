@@ -8,7 +8,7 @@
 #include "texture.h"
 #include <cglm/cglm.h>
 #include "cglmExtention.h"
-#include "vendor/nuklear/nuklear.h"
+#include "camera.h"
 
 
 #define W_WIDTH 960
@@ -48,37 +48,6 @@ int main(){
 		printf("could not init GLEW");
 		return -1;
 	}
-
-//  Nuklear UI that can be used for debugging, etc	
-//  enum {EASY, HARD};
-//  static int op = EASY;
-//  static float value = 0.6f;
-//  static int i =  20;
-//  struct nk_context ctx;
-//  int nk_init_default(struct nk_context *ctx, const struct nk_user_font *font);
-//  if (nk_begin(&ctx, "Show", nk_rect(50, 50, 220, 220),
-//      NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_CLOSABLE)) {
-//      // fixed widget pixel width
-//      nk_layout_row_static(&ctx, 30, 80, 1);
-//      if (nk_button_label(&ctx, "button")) {
-//          // event handling
-//      }
-//      // fixed widget window ratio width
-//      nk_layout_row_dynamic(&ctx, 30, 2);
-//      if (nk_option_label(&ctx, "easy", op == EASY)) op = EASY;
-//      if (nk_option_label(&ctx, "hard", op == HARD)) op = HARD;
-//      // custom widget pixel width
-//      nk_layout_row_begin(&ctx, NK_STATIC, 30, 2);
-//      {
-//          nk_layout_row_push(&ctx, 50);
-//          nk_label(&ctx, "Volume:", NK_TEXT_LEFT);
-//          nk_layout_row_push(&ctx, 110);
-//          nk_slider_float(&ctx, 0, &value, 1.0f, 0.1f);
-//      }
-//      nk_layout_row_end(&ctx);
-//  }
-//  nk_end(&ctx);
-	
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
@@ -125,18 +94,14 @@ int main(){
 	vec3 translationA  = {00, 00, -200};
 	vec3 translationB  = {30, 00, -150};
 
-	vec3 camera = {0, 0, 0};
-	vec3 negCam = {0, 0, 0};
-	float xrot = 0.0f;
-	float yrot = 0.0f;
+	struct Camera camera;
+	initCamera(&camera);
 
 	mat4 proj;
-    glm_perspective(90.0f, SCREEN_RATIO, 20.00f, 1000.0f, proj);
-	mat4 view;
+    glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 1000.0f, proj);
 	mat4 model;
 
 	mat4 mvp;
-	glm_mat4_mulN((mat4 *[]){&proj, &view, &model}, 3, mvp);
 
 	struct Shader shader;
 	initShader(&shader);
@@ -150,63 +115,61 @@ int main(){
 	bindTextureID(texture, 0);
 	shaderSetUniform1i(&shader, "u_Texture", 0);
 
-	shaderSetUniformMat4f(&shader, "u_MVP", mvp);
-
+	struct Renderer renderer;
+	initRenderer(&renderer);
+	
 	unbindVertexArray(vao);
 	unbindShader(shader);
 	unbindIndexBuffer(ib);
 
-	float r = 0.0f;
-	float increment = 0.05f;
-
-	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS){ //loop for program
-		rendererClear();
-
+	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && rendererLoop(&renderer)){
 		//wasd
 		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-			glm_vec3_sub(camera, (vec3){0.0f, 0.0f, 1.0f}, camera);
+			cameraMoveRelativeZ(&camera, 30.0f * renderer.deltatime);
 		}
 		if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-			glm_vec3_sub(camera, (vec3){0.0f, 0.0f, -1.0f}, camera);
+			cameraMoveRelativeZ(&camera, -30.0f * renderer.deltatime);
 		}
 		if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-			glm_vec3_sub(camera, (vec3){-1.0f, 0.0f, 0.0f}, camera);
+			cameraMoveRelativeX(&camera, 30.0f * renderer.deltatime);
 		} 
 		if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-			glm_vec3_sub(camera, (vec3){1.0f, 0.0f, 0.0f}, camera);
+			cameraMoveRelativeX(&camera, -30.0f * renderer.deltatime);
 		} 
-		glm_vec3_negate_to(camera, negCam);
-		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, negCam, view);
 
+		//reset
+		if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
+			initCamera(&camera);
+		}
 
 		//arrow camera
 		if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-			yrot -= 0.5f;
+			camera.pitch += 15.0f * renderer.deltatime;
 		}
 		if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-			yrot += 0.5f;
+			camera.pitch -= 15.0f * renderer.deltatime;
 		}
 		if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-			xrot += 0.5f;
+			camera.yaw += 15.0f * renderer.deltatime;
 		} 
 		if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-			xrot -= 0.5f;
+			camera.yaw -= 15.0f * renderer.deltatime;
 		} 
-		glm_rotate_at(view, camera, glm_rad(yrot), (vec3){1.0f, 0.0f, 0.0f});
-		glm_rotate_at(view, camera, glm_rad(xrot), (vec3){0.0f, 1.0f, 0.0f});
+		cameraUpdateViewMatrix(&camera);
+
 
 
 		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationA, model);
 
-		glm_mat4_mulN((mat4 *[]){&proj, &view, &model}, 3, mvp);
+		glm_mat4_mulN((mat4 *[]){&proj, &camera.view, &model}, 3, mvp);
 		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
 		rendererDraw(vao, ib, shader);
 
 		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationB, model);
-		glm_mat4_mulN((mat4 *[]){&proj, &view, &model}, 3, mvp);
+		glm_mat4_mulN((mat4 *[]){&proj, &camera.view, &model}, 3, mvp);
 		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
 		rendererDraw(vao, ib, shader);
-		
+
 		glfwSwapBuffers(window); //swap the buffer
 		glfwPollEvents(); //poll for events
 	}

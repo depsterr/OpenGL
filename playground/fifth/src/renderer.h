@@ -6,7 +6,9 @@
 #include "shader.h"
 
 struct Renderer{
-	
+	float deltatime; //multiplying movement by this gives that amount of movement per second
+	float lasttime;
+	float currenttime;
 };
 
 void rendererDraw(const struct VertexArray va, const struct IndexBuffer ib, const struct Shader shader);
@@ -23,3 +25,5 @@ void GLAPIENTRY MessageCallback( GLenum source,
 
 void static GLClearError();
 void static GLCheckError();
+unsigned char rendererLoop(struct Renderer *renderer);
+void initRenderer(struct Renderer *renderer);
