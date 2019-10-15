@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include <GLFW/glfw3.h>
 #include <stdio.h>
 
 void GLAPIENTRY MessageCallback( GLenum source,
@@ -34,4 +35,18 @@ void rendererDraw(const struct VertexArray va, const struct IndexBuffer ib, cons
 
 const void rendererClear(){
 	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+unsigned char rendererLoop(struct Renderer *renderer){
+	rendererClear();
+	renderer->currenttime = glfwGetTime();
+	renderer->deltatime = renderer->currenttime - renderer->lasttime;
+	renderer->lasttime = renderer->currenttime;
+	return 1;
+}
+
+void initRenderer(struct Renderer *renderer){
+	renderer->currenttime = glfwGetTime();
+	renderer->lasttime = renderer->currenttime;
+	renderer->deltatime = 0.0f;
 }
