@@ -59,15 +59,15 @@ int main(){
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
 	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates
-		000.0f, 000.0f, 000.0f, 0.0f, 0.0f, //front facing
-		100.0f, 000.0f, 000.0f, 1.0f, 0.0f,
-		100.0f, 100.0f, 000.0f, 1.0f, 1.0f,
-		000.0f, 100.0f, 000.0f, 0.0f, 1.0f,
+		000.0f, 000.0f, 000.0f, 1.0f, 0.0f, //back facing
+		100.0f, 000.0f, 000.0f, 0.0f, 0.0f,
+		100.0f, 100.0f, 000.0f, 0.0f, 1.0f,
+		000.0f, 100.0f, 000.0f, 1.0f, 1.0f,
 
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, //back facing
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f,
-		000.0f, 100.0f, 100.0f, 1.0f, 1.0f,
-		100.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+		100.0f, 000.0f, 100.0f, 1.0f, 0.0f, //front facing
+		000.0f, 000.0f, 100.0f, 0.0f, 0.0f,
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f,
 
 		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, //top
 		100.0f, 100.0f, 000.0f, 1.0f, 0.0f,
@@ -79,18 +79,18 @@ int main(){
 		000.0f, 000.0f, 000.0f, 1.0f, 1.0f,
 		100.0f, 000.0f, 000.0f, 0.0f, 1.0f,
 
-		000.0f, 000.0f, 100.0f, 0.0f, 0.0f, //left
-		000.0f, 000.0f, 000.0f, 1.0f, 0.0f,
-		000.0f, 100.0f, 000.0f, 1.0f, 1.0f,
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, //left
+		000.0f, 000.0f, 000.0f, 0.0f, 0.0f,
+		000.0f, 100.0f, 000.0f, 0.0f, 1.0f,
+		000.0f, 100.0f, 100.0f, 1.0f, 1.0f,
 
-		100.0f, 000.0f, 000.0f, 0.0f, 0.0f, //right
-		100.0f, 000.0f, 100.0f, 1.0f, 0.0f,
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f,
-		100.0f, 100.0f, 000.0f, 0.0f, 1.0f
+		100.0f, 000.0f, 000.0f, 1.0f, 0.0f, //right
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f,
+		100.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+		100.0f, 100.0f, 000.0f, 1.0f, 1.0f
 	};
 
-	unsigned int indicies[] = { //define positions to use for rendering two triangles to make a square
+	unsigned int indicies[] = { 
 		0, 1, 2, //front
 		2, 3, 0,
 
@@ -108,7 +108,7 @@ int main(){
 
 		20, 21, 22, //right
 		22, 23, 20
-	}; //todo fix this left bottom
+	}; 
 
 	struct IndexBuffer ib;
 	initIndexBuffer(&ib, indicies, 6 * 6); //todo fix this
