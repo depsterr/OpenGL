@@ -17,6 +17,8 @@
 #define FOV 100.0f
 #define FARVAL 900.0f
 #define NEARVAL 10.0f
+#define TURNSPEED 90.0f
+#define MOVESPEED 100.0f
 
 int main(){
 	GLFWwindow* window; //create window obj
@@ -50,22 +52,66 @@ int main(){
 	}
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
 	glDebugMessageCallback(MessageCallback, 0);
 
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
 	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates
-		000.0f, 000.0f, 0.0f, 0.0f, 0.0f,
-		100.0f, 000.0f, 0.0f, 1.0f, 0.0f,
-		100.0f, 100.0f, 0.0f, 1.0f, 1.0f,
-		000.0f, 100.0f, 0.0f, 0.0f, 1.0f
+		000.0f, 000.0f, 000.0f, 0.0f, 0.0f, //front facing
+		100.0f, 000.0f, 000.0f, 1.0f, 0.0f,
+		100.0f, 100.0f, 000.0f, 1.0f, 1.0f,
+		000.0f, 100.0f, 000.0f, 0.0f, 1.0f,
+
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, //back facing
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f,
+		000.0f, 100.0f, 100.0f, 1.0f, 1.0f,
+		100.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+
+		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, //top
+		100.0f, 100.0f, 000.0f, 1.0f, 0.0f,
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f,
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, //bottom
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f,
+		000.0f, 000.0f, 000.0f, 1.0f, 1.0f,
+		100.0f, 000.0f, 000.0f, 0.0f, 1.0f,
+
+		000.0f, 000.0f, 100.0f, 0.0f, 0.0f, //left
+		000.0f, 000.0f, 000.0f, 1.0f, 0.0f,
+		000.0f, 100.0f, 000.0f, 1.0f, 1.0f,
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+
+		100.0f, 000.0f, 000.0f, 0.0f, 0.0f, //right
+		100.0f, 000.0f, 100.0f, 1.0f, 0.0f,
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f,
+		100.0f, 100.0f, 000.0f, 0.0f, 1.0f
 	};
 
 	unsigned int indicies[] = { //define positions to use for rendering two triangles to make a square
-		0, 1, 2,
-		2, 3, 0
-	};
+		0, 1, 2, //front
+		2, 3, 0,
+
+		4, 5, 6, //back
+		6, 7, 4,
+
+		8, 9, 10, //top
+		10, 11, 8,
+
+		12, 13, 14, //bottom
+		14, 15, 12,
+
+		16, 17, 18, //left
+		18, 19, 16,
+
+		20, 21, 22, //right
+		22, 23, 20
+	}; //todo fix this left bottom
+
+	struct IndexBuffer ib;
+	initIndexBuffer(&ib, indicies, 6 * 6); //todo fix this
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -74,7 +120,7 @@ int main(){
 	initVertexArray(&vao);
 
 	struct VertexBuffer vb;
-	initVertexBuffer(&vb, positions, sizeof(float) * 4 * 5);
+	initVertexBuffer(&vb, positions, sizeof(float) * 6 * 4 * 5);
 
 	struct VertexBufferLayout vbl;
 	initVertexBufferLayout(&vbl);
@@ -84,15 +130,11 @@ int main(){
 
 	vertexArrayAddBuffer(&vao, &vb, &vbl);
 
-	//deleteVertexBufferLayout(&vbl);
-	
-	struct IndexBuffer ib;
-	initIndexBuffer(&ib, indicies, 6);
 	
 	//create shader from source
 	
 	vec3 translationA  = {00, 00, -200};
-	vec3 translationB  = {30, 00, -150};
+	vec3 translationB  = {300, 00, -150};
 
 	struct Camera camera;
 	initCamera(&camera);
@@ -108,6 +150,7 @@ int main(){
 	addShaderPath(&shader, "shader/BasicVertex.shader", GL_VERTEX_SHADER);
 	addShaderPath(&shader, "shader/BasicFragment.shader", GL_FRAGMENT_SHADER);
 	compileShader(&shader);
+	freeShader(&shader);
 	bindShader(shader);
 
 	struct Texture texture;
@@ -122,19 +165,19 @@ int main(){
 	unbindShader(shader);
 	unbindIndexBuffer(ib);
 
-	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && rendererLoop(&renderer)){
+	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && rendererLoop(&renderer, window)){
 		//wasd
 		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-			cameraMoveRelativeZ(&camera, 30.0f * renderer.deltatime);
+			cameraMoveRelativeZ(&camera, MOVESPEED * renderer.deltatime);
 		}
 		if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-			cameraMoveRelativeZ(&camera, -30.0f * renderer.deltatime);
+			cameraMoveRelativeZ(&camera, -MOVESPEED * renderer.deltatime);
 		}
 		if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-			cameraMoveRelativeX(&camera, 30.0f * renderer.deltatime);
+			cameraMoveRelativeX(&camera, MOVESPEED * renderer.deltatime);
 		} 
 		if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-			cameraMoveRelativeX(&camera, -30.0f * renderer.deltatime);
+			cameraMoveRelativeX(&camera, -MOVESPEED * renderer.deltatime);
 		} 
 
 		//reset
@@ -144,16 +187,16 @@ int main(){
 
 		//arrow camera
 		if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-			camera.pitch += 15.0f * renderer.deltatime;
+			camera.pitch += TURNSPEED * renderer.deltatime;
 		}
 		if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-			camera.pitch -= 15.0f * renderer.deltatime;
+			camera.pitch -= TURNSPEED * renderer.deltatime;
 		}
 		if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-			camera.yaw += 15.0f * renderer.deltatime;
+			camera.yaw += TURNSPEED * renderer.deltatime;
 		} 
 		if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-			camera.yaw -= 15.0f * renderer.deltatime;
+			camera.yaw -= TURNSPEED * renderer.deltatime;
 		} 
 		cameraUpdateViewMatrix(&camera);
 
@@ -169,9 +212,6 @@ int main(){
 		glm_mat4_mulN((mat4 *[]){&proj, &camera.view, &model}, 3, mvp);
 		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
 		rendererDraw(vao, ib, shader);
-
-		glfwSwapBuffers(window); //swap the buffer
-		glfwPollEvents(); //poll for events
 	}
 
 	deleteShader(&shader);

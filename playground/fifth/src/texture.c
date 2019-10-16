@@ -13,6 +13,7 @@ void initTexture(struct Texture *texture, char path[]){
 	texture->m_BPP = 0;
 
 	stbi_set_flip_vertically_on_load(1); //has to do with image encodings
+	//stbi_set_flip_horizontally_on_load(1);
 	texture->m_LocalBuffer = stbi_load(path, &texture->m_Width, &texture->m_Height, &texture->m_BPP, 4);
 
 	glGenTextures(1, &texture->m_RendererID);
