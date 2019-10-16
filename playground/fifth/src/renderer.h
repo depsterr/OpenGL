@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include "vertexArray.h"
 #include "indexBuffer.h"
 #include "shader.h"
@@ -25,5 +26,5 @@ void GLAPIENTRY MessageCallback( GLenum source,
 
 void static GLClearError();
 void static GLCheckError();
-unsigned char rendererLoop(struct Renderer *renderer);
+unsigned char rendererLoop(struct Renderer *renderer, GLFWwindow* window);
 void initRenderer(struct Renderer *renderer);
