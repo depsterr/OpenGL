@@ -6,6 +6,7 @@ struct VertexBufferElement{
 	unsigned int type;
 	unsigned int count;
 	unsigned char normalized; //bool :)
+	unsigned char instanced; //bool (:
 };
 
 struct VertexBufferLayout{
@@ -21,5 +22,8 @@ void initVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout);
 void deleteVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout);
 
 void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal);
+
+//like the one above but makes the vertex buffer shift one value per time
+void pushInstancedVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal);
 
 unsigned int getSizeOfType(unsigned int type); //used to add to the stride

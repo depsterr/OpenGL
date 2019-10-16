@@ -14,6 +14,8 @@ struct Renderer{
 
 void rendererDraw(const struct VertexArray va, const struct IndexBuffer ib, const struct Shader shader);
 
+void rendererInstancedDraw(const struct VertexArray va, const struct IndexBuffer ib, const struct Shader shader, unsigned int count);
+
 const void rendererClear();
 
 void GLAPIENTRY MessageCallback( GLenum source,

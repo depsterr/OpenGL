@@ -127,6 +127,7 @@ int main(){
 
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
+	//pushInstancedVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
 
 	vertexArrayAddBuffer(&vao, &vb, &vbl);
 

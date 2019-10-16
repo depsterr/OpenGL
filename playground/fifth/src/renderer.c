@@ -32,6 +32,13 @@ void rendererDraw(const struct VertexArray va, const struct IndexBuffer ib, cons
 	glDrawElements(GL_TRIANGLES, ib.m_Count, GL_UNSIGNED_INT, 0); //draw triangles with 6 total verticies
 }
 
+void rendererInstancedDraw(const struct VertexArray va, const struct IndexBuffer ib, const struct Shader shader, unsigned int count){
+	bindShader(shader);
+	bindVertexArray(va);
+	bindIndexBuffer(ib);
+	glDrawElementsInstanced(GL_TRIANGLES, ib.m_Count, GL_UNSIGNED_INT, 0, count); //draw triangles with 6 total verticies
+}
+
 const void rendererClear(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -21,6 +21,17 @@ void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsig
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].type = inputType;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].count = count;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].normalized = normal;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].instanced = 0;
+		vertexbufferlayout->m_Stride += getSizeOfType(inputType) * count;
+}
+
+void pushInstancedVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal){
+		vertexbufferlayout->count++;
+		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement));
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].type = inputType;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].count = count;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].normalized = normal;
+		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].instanced = 1;
 		vertexbufferlayout->m_Stride += getSizeOfType(inputType) * count;
 }
 

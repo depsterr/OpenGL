@@ -25,6 +25,7 @@ void vertexArrayAddBuffer(const struct VertexArray *vertexarray,const struct Ver
 		const struct VertexBufferElement element = vertexbufferlayout->m_Elements[n];
 		glEnableVertexAttribArray(n);
 		glVertexAttribPointer(n, element.count, element.type, element.normalized, vertexbufferlayout->m_Stride, (const void*)offset);
+		if(element.instanced != 0) {glVertexAttribDivisor(2, 1);} //instanced buffers for instanced draw
 		offset += element.count * getSizeOfType(element.type);
 	}
 }
