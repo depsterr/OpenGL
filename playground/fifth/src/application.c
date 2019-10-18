@@ -53,42 +53,75 @@ int main(){
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
 	glDebugMessageCallback(MessageCallback, 0);
 
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
 	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates
-		000.0f, 000.0f, 000.0f, 1.0f, 0.0f, //back facing
-		100.0f, 000.0f, 000.0f, 0.0f, 0.0f,
+        //back facing
+		000.0f, 000.0f, 000.0f, 1.0f, 0.0f,  
+		100.0f, 000.0f, 000.0f, 0.0f, 0.0f, 
 		100.0f, 100.0f, 000.0f, 0.0f, 1.0f,
 		000.0f, 100.0f, 000.0f, 1.0f, 1.0f,
 
-		100.0f, 000.0f, 100.0f, 1.0f, 0.0f, //front facing
-		000.0f, 000.0f, 100.0f, 0.0f, 0.0f,
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f,
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f,
+		//front facing		
+		100.0f, 000.0f, 100.0f, 1.0f, 0.0f, 
+		000.0f, 000.0f, 100.0f, 0.0f, 0.0f, 
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 
 
-		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, //top
-		100.0f, 100.0f, 000.0f, 1.0f, 0.0f,
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f,
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f,
+        //top
+		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, 
+		100.0f, 100.0f, 000.0f, 1.0f, 0.0f, 
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 
 
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, //bottom
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f,
-		000.0f, 000.0f, 000.0f, 1.0f, 1.0f,
-		100.0f, 000.0f, 000.0f, 0.0f, 1.0f,
+        //bottom
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, 
+		000.0f, 000.0f, 000.0f, 1.0f, 1.0f, 
+		100.0f, 000.0f, 000.0f, 0.0f, 1.0f, 
 
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, //left
-		000.0f, 000.0f, 000.0f, 0.0f, 0.0f,
-		000.0f, 100.0f, 000.0f, 0.0f, 1.0f,
-		000.0f, 100.0f, 100.0f, 1.0f, 1.0f,
+		//left
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, 
+		000.0f, 000.0f, 000.0f, 0.0f, 0.0f, 
+		000.0f, 100.0f, 000.0f, 0.0f, 1.0f, 
+		000.0f, 100.0f, 100.0f, 1.0f, 1.0f, 
 
-		100.0f, 000.0f, 000.0f, 1.0f, 0.0f, //right
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f,
-		100.0f, 100.0f, 100.0f, 0.0f, 1.0f,
-		100.0f, 100.0f, 000.0f, 1.0f, 1.0f
+   	 	//right
+		100.0f, 000.0f, 000.0f, 1.0f, 0.0f, 
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 
+		100.0f, 100.0f, 100.0f, 0.0f, 1.0f, 
+		100.0f, 100.0f, 000.0f, 1.0f, 1.0f 
 	};
+
+	struct VertexBuffer vb;                       
+	initVertexBuffer(&vb, positions, sizeof(float) * 5 * 4 * 6);
+
+	struct VertexBufferLayout vbl;
+	initVertexBufferLayout(&vbl);
+
+	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
+	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
+
+	vec3 translationA = {000, 00, -200};
+	vec3 translationB = {300, 00, -150};
+
+	mat4 transforms[2];
+
+	glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationA, transforms[0]);
+	glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationB, transforms[1]);
+
+	struct VertexBuffer ivb;
+	initVertexBuffer(&ivb, &transforms[0], 2 * sizeof(mat4));
+
+	struct VertexBufferLayout ivbl;
+	initVertexBufferLayout(&ivbl);
+
+	pushInstancedVertexBufferMat4(&ivbl);
 
 	unsigned int indicies[] = { 
 		0, 1, 2, //front
@@ -113,57 +146,53 @@ int main(){
 	struct IndexBuffer ib;
 	initIndexBuffer(&ib, indicies, 6 * 6); //todo fix this
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	struct VertexArray vao;
 	initVertexArray(&vao);
 
-	struct VertexBuffer vb;
-	initVertexBuffer(&vb, positions, sizeof(float) * 6 * 4 * 5);
-
-	struct VertexBufferLayout vbl;
-	initVertexBufferLayout(&vbl);
-
-	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
-	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
-	//pushInstancedVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
-
 	vertexArrayAddBuffer(&vao, &vb, &vbl);
-
-	
-	//create shader from source
-	
-	vec3 translationA  = {00, 00, -200};
-	vec3 translationB  = {300, 00, -150};
+	vertexArrayAddBuffer(&vao, &ivb, &ivbl);
+	printf("\n%d\n", vao.attribCount);
 
 	struct Camera camera;
 	initCamera(&camera);
 
 	mat4 proj;
     glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 1000.0f, proj);
-	mat4 model;
 
-	mat4 mvp;
+	mat4 model = GLM_MAT4_IDENTITY_INIT;
 
-	struct Shader shader;
-	initShader(&shader);
-	addShaderPath(&shader, "shader/BasicVertex.shader", GL_VERTEX_SHADER);
-	addShaderPath(&shader, "shader/BasicFragment.shader", GL_FRAGMENT_SHADER);
-	compileShader(&shader);
-	freeShader(&shader);
-	bindShader(shader);
+	//normal shader
+	
+//	struct Shader shader;
+//	initShader(&shader);
+//	addShaderPath(&shader, "shader/BasicVertex.shader", GL_VERTEX_SHADER);
+//	addShaderPath(&shader, "shader/BasicFragment.shader", GL_FRAGMENT_SHADER);
+//	compileShader(&shader);
+//	freeShader(&shader);
+//	bindShader(shader);
+
+	//instance shader
+	struct Shader instanceShader;
+	initShader(&instanceShader);
+	addShaderPath(&instanceShader, "shader/InstanceVertex.shader", GL_VERTEX_SHADER);
+	addShaderPath(&instanceShader, "shader/BasicFragment.shader", GL_FRAGMENT_SHADER);
+	compileShader(&instanceShader);
+	freeShader(&instanceShader);
+	bindShader(instanceShader);
+
+	shaderSetUniformMat4f(&instanceShader, "projection", proj);
 
 	struct Texture texture;
 	initTexture(&texture, "resources/textures/source-test.jpeg");
 	bindTextureID(texture, 0);
-	shaderSetUniform1i(&shader, "u_Texture", 0);
+
+	shaderSetUniform1i(&instanceShader, "u_Texture", 0);
 
 	struct Renderer renderer;
 	initRenderer(&renderer);
 	
 	unbindVertexArray(vao);
-	unbindShader(shader);
+	unbindShader(instanceShader);
 	unbindIndexBuffer(ib);
 
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && rendererLoop(&renderer, window)){
@@ -201,20 +230,13 @@ int main(){
 		} 
 		cameraUpdateViewMatrix(&camera);
 
+	//	shaderSetUniformMat4f(&shader, "model", model);
+	//	shaderSetUniformMat4f(&shader, "view", camera.view);
+		shaderSetUniformMat4f(&instanceShader, "view", camera.view);
+	//	rendererDraw(vao, ib, shader);
+		rendererInstancedDraw(vao, ib, instanceShader, 2);
 
-
-		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationA, model);
-
-		glm_mat4_mulN((mat4 *[]){&proj, &camera.view, &model}, 3, mvp);
-		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
-		rendererDraw(vao, ib, shader);
-
-		glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationB, model);
-		glm_mat4_mulN((mat4 *[]){&proj, &camera.view, &model}, 3, mvp);
-		shaderSetUniformMat4f(&shader, "u_MVP", mvp);
-		rendererDraw(vao, ib, shader);
 	}
 
-	deleteShader(&shader);
 	glfwTerminate(); //kill GLFW
 }

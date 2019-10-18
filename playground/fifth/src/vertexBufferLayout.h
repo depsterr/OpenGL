@@ -26,4 +26,6 @@ void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsig
 //like the one above but makes the vertex buffer shift one value per time
 void pushInstancedVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal);
 
+void pushInstancedVertexBufferMat4(struct VertexBufferLayout *vertexbufferlayout);
+
 unsigned int getSizeOfType(unsigned int type); //used to add to the stride
