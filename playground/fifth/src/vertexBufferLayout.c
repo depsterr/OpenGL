@@ -17,7 +17,7 @@ void deleteVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout){
 
 void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal){
 		vertexbufferlayout->count++;
-		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement));
+		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement) * count);
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].type = inputType;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].count = count;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].normalized = normal;
@@ -27,12 +27,20 @@ void pushVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsig
 
 void pushInstancedVertexBufferLayout(struct VertexBufferLayout *vertexbufferlayout, unsigned int inputType, unsigned int count, unsigned char normal){
 		vertexbufferlayout->count++;
-		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement));
+		vertexbufferlayout->m_Elements = (struct VertexBufferElement*)realloc(vertexbufferlayout->m_Elements, sizeof(struct VertexBufferElement) * count);
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].type = inputType;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].count = count;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].normalized = normal;
 		vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].instanced = 1;
 		vertexbufferlayout->m_Stride += getSizeOfType(inputType) * count;
+	//	printf("\npushInstancedVertexBufferLayout(), count: %d, type: %d, count %d, normalized %d, instanced %d\n",vertexbufferlayout->count, vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].type ,vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].count ,vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].normalized ,vertexbufferlayout->m_Elements[vertexbufferlayout->count-1].instanced );
+}
+
+void pushInstancedVertexBufferMat4(struct VertexBufferLayout *vertexbufferlayout){
+	pushInstancedVertexBufferLayout(vertexbufferlayout, GL_FLOAT, 4, GL_FALSE);
+	pushInstancedVertexBufferLayout(vertexbufferlayout, GL_FLOAT, 4, GL_FALSE);
+	pushInstancedVertexBufferLayout(vertexbufferlayout, GL_FLOAT, 4, GL_FALSE);
+	pushInstancedVertexBufferLayout(vertexbufferlayout, GL_FLOAT, 4, GL_FALSE);
 }
 
 unsigned int getSizeOfType(unsigned int type){ //used to add to the stride

@@ -1,7 +1,7 @@
 CC=gcc
 PROJECTDIR=build/application.out
 BUILDDIR=.
-CFLAGS= -lglfw -lGLEW -lGL -lGLU -lm -lcglm
+CFLAGS= -lglfw -lGLEW -lGL -lGLU -lm -lcglm -g
 
 default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o stb_image.o texture.o camera.o
 	$(CC) -o $(PROJECTDIR) $^ $(CFLAGS)
