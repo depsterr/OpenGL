@@ -18,7 +18,7 @@
 #define FARVAL 900.0f
 #define NEARVAL 10.0f
 #define TURNSPEED 90.0f
-#define MOVESPEED 100.0f
+#define MOVESPEED 1000.0f
 
 int main(){
 	GLFWwindow* window; //create window obj
@@ -51,7 +51,7 @@ int main(){
 		return -1;
 	}
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -107,16 +107,20 @@ int main(){
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
 
-	vec3 translationA = {000, 00, -200};
-	vec3 translationB = {300, 00, -150};
+	mat4 *transforms;
+	transforms = (mat4*)malloc(1000000 * sizeof(mat4));
 
-	mat4 transforms[2];
+	for(int x = 0; x < 100; x++){
+		for(int y = 0; y < 100; y++){
+			for(int z = 0; z < 100; z++){
+				glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, (vec3){150 * x, 150 * z, 150 * y}, transforms[(x * 100 * 100) + (y * 100) + z]);
+			}
+		}
+	}
 
-	glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationA, transforms[0]);
-	glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, translationB, transforms[1]);
 
 	struct VertexBuffer ivb;
-	initVertexBuffer(&ivb, &transforms[0], 2 * sizeof(mat4));
+	initVertexBuffer(&ivb, &transforms[0], 1000000 * sizeof(mat4));
 
 	struct VertexBufferLayout ivbl;
 	initVertexBufferLayout(&ivbl);
@@ -157,7 +161,7 @@ int main(){
 	initCamera(&camera);
 
 	mat4 proj;
-    glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 1000.0f, proj);
+    glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 100000.0f, proj);
 
 	mat4 model = GLM_MAT4_IDENTITY_INIT;
 
@@ -234,7 +238,7 @@ int main(){
 	//	shaderSetUniformMat4f(&shader, "view", camera.view);
 		shaderSetUniformMat4f(&instanceShader, "view", camera.view);
 	//	rendererDraw(vao, ib, shader);
-		rendererInstancedDraw(vao, ib, instanceShader, 2);
+		rendererInstancedDraw(vao, ib, instanceShader, 1000000);
 
 	}
 
