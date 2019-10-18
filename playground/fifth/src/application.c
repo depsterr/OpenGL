@@ -11,14 +11,15 @@
 #include "camera.h"
 
 
-#define W_WIDTH 960
-#define W_HEIGHT 540
+#define W_WIDTH 1920
+#define W_HEIGHT 1080
 #define SCREEN_RATIO ((float)((float)W_WIDTH/(float)W_HEIGHT))
 #define FOV 100.0f
 #define FARVAL 900.0f
 #define NEARVAL 10.0f
 #define TURNSPEED 90.0f
 #define MOVESPEED 1000.0f
+//#define fps enable to show fps
 
 int main(){
 	GLFWwindow* window; //create window obj
@@ -40,11 +41,12 @@ int main(){
 		return -1;
 	}
 
-	glfwSwapInterval(1); //Vsync enabled
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	glfwMakeContextCurrent(window); //set window to the current context
+
+	glfwSwapInterval(0); //Vsync disabled
 
 	if(glewInit() != GLEW_OK){ //init GLEW
 		printf("could not init GLEW");
@@ -198,8 +200,12 @@ int main(){
 	unbindVertexArray(vao);
 	unbindShader(instanceShader);
 	unbindIndexBuffer(ib);
+	free(transforms);
 
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && rendererLoop(&renderer, window)){
+#ifdef fps
+		printf("\nfps: %.2f", 1.0f / renderer.deltatime);
+#endif
 		//wasd
 		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
 			cameraMoveRelativeZ(&camera, MOVESPEED * renderer.deltatime);
