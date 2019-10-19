@@ -63,52 +63,53 @@ int main(){
 
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
-	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates
+	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates and normals
         //back facing
-		000.0f, 000.0f, 000.0f, 1.0f, 0.0f,  
-		100.0f, 000.0f, 000.0f, 0.0f, 0.0f, 
-		100.0f, 100.0f, 000.0f, 0.0f, 1.0f,
-		000.0f, 100.0f, 000.0f, 1.0f, 1.0f,
+		000.0f, 000.0f, 000.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+		100.0f, 000.0f, 000.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+		100.0f, 100.0f, 000.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,
+		000.0f, 100.0f, 000.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
 
 		//front facing		
-		100.0f, 000.0f, 100.0f, 1.0f, 0.0f, 
-		000.0f, 000.0f, 100.0f, 0.0f, 0.0f, 
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 
+		100.0f, 000.0f, 100.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 
+		000.0f, 000.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 
         //top
-		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, 
-		100.0f, 100.0f, 000.0f, 1.0f, 0.0f, 
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 
+		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		100.0f, 100.0f, 000.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 
         //bottom
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, 
-		000.0f, 000.0f, 000.0f, 1.0f, 1.0f, 
-		100.0f, 000.0f, 000.0f, 0.0f, 1.0f, 
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,  
+		000.0f, 000.0f, 000.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+		100.0f, 000.0f, 000.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
 
 		//left
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, 
-		000.0f, 000.0f, 000.0f, 0.0f, 0.0f, 
-		000.0f, 100.0f, 000.0f, 0.0f, 1.0f, 
-		000.0f, 100.0f, 100.0f, 1.0f, 1.0f, 
+		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		000.0f, 000.0f, 000.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		000.0f, 100.0f, 000.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+		000.0f, 100.0f, 100.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
 
    	 	//right
-		100.0f, 000.0f, 000.0f, 1.0f, 0.0f, 
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 
-		100.0f, 100.0f, 100.0f, 0.0f, 1.0f, 
-		100.0f, 100.0f, 000.0f, 1.0f, 1.0f 
+		100.0f, 000.0f, 000.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 
+		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		100.0f, 100.0f, 100.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		100.0f, 100.0f, 000.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
 	};
 
 	struct VertexBuffer vb;                       
-	initVertexBuffer(&vb, positions, sizeof(float) * 5 * 4 * 6);
+	initVertexBuffer(&vb, positions, sizeof(float) * 8 * 4 * 6);
 
 	struct VertexBufferLayout vbl;
 	initVertexBufferLayout(&vbl);
 
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
+	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
 
 	mat4 *transforms;
 	transforms = (mat4*)malloc(2 * sizeof(mat4));
@@ -201,7 +202,11 @@ int main(){
 	freeShader(&instanceShader);
 	bindShader(instanceShader);
 
-	shaderSetUniform1f(&instanceShader, "ambientStrength", 0.7f);
+	shaderSetUniform1f(&instanceShader, "ambientStrength", 0.3f);
+	shaderSetUniform1f(&instanceShader, "specularStrength", 0.3f);
+	shaderSetUniform3f(&instanceShader, "lightPos", 50, 150, -125);
+	shaderSetUniform3f(&instanceShader, "lightColor", 1.0f, 1.0f, 1.0f);
+	shaderSetUniform3f(&instanceShader, "viewPos", 0.0f, 0.0f, 0.0f);
 
 	shaderSetUniformMat4f(&instanceShader, "projection", proj);
 	shaderSetUniformMat4f(&whiteShader, "projection", proj);
@@ -265,9 +270,9 @@ int main(){
 
 		shaderSetUniformMat4f(&instanceShader, "view", camera.view);
 		shaderSetUniformMat4f(&whiteShader, "view", camera.view);
+		shaderSetUniform3f(&instanceShader, "viewPos", camera.position[0], camera.position[1], camera.position[2]);
 		rendererInstancedDraw(vao, ib, instanceShader, 2);
 		rendererDraw(svao, sib, whiteShader);
-
 	}
 
 	glfwTerminate(); //kill GLFW

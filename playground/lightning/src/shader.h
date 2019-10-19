@@ -29,6 +29,8 @@ const void unbindShader(struct Shader shader);
 
 void shaderSetUniform4f(struct Shader *shader, const char name[], float v1, float v2, float v3, float v4); //just sets a vec4
 
+void shaderSetUniform3f(struct Shader *shader, const char name[], float v1, float v2, float v3); //just sets a vec4
+
 void shaderSetUniform1f(struct Shader *shader, const char name[], float v1);
 
 void shaderSetUniform1i(struct Shader *shader, const char name[], int v1);

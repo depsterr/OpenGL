@@ -78,7 +78,6 @@ void compileShader(struct Shader *shader){
 		glDeleteShader(shaderIDs[n]);
 	}
 	free(shaderIDs);
-	
 }
 
 static unsigned int compileShaderSource(unsigned int type, const char source[]){ //function to compile the shader, that way we do not have to write the same code twice in CreateShader()
@@ -108,6 +107,11 @@ static unsigned int compileShaderSource(unsigned int type, const char source[]){
 void shaderSetUniform4f(struct Shader *shader, const char name[], float v1, float v2, float v3, float v4){
 	bindShader(*shader);
 	glUniform4f(shaderGetUniformLocation(shader, name), v1, v2, v3, v4);
+}
+
+void shaderSetUniform3f(struct Shader *shader, const char name[], float v1, float v2, float v3){
+	bindShader(*shader);
+	glUniform3f(shaderGetUniformLocation(shader, name), v1, v2, v3);
 }
 
 void shaderSetUniform1f(struct Shader *shader, const char name[], float v1){
