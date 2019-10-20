@@ -12,17 +12,38 @@
 #include "shapes.h"
 
 
-#define W_WIDTH 960
-#define W_HEIGHT 540
+#define W_WIDTH 1920
+#define W_HEIGHT 1080
 #define SCREEN_RATIO ((float)((float)W_WIDTH/(float)W_HEIGHT))
 #define FOV 90.0f
 #define FARVAL 900.0f
 #define NEARVAL 10.0f
 #define TURNSPEED 90.0f
 #define MOVESPEED 500.0f
+#define SENSITIVITY 0.05f
 //#define fps enable to show fps
 
+struct Camera camera;
+
+float lastX = W_WIDTH / 2, lastY = W_HEIGHT / 2;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+	float xoffset = xpos - lastX;
+	float yoffset = ypos - lastY;
+	lastX = xpos;
+	lastY = ypos;
+
+	xoffset *= SENSITIVITY;
+	yoffset *= SENSITIVITY;
+
+	camera.pitch += yoffset;
+	camera.yaw += yoffset;
+}
+
 int main(){
+
+	//init GLFW and set up settings
+
 	GLFWwindow* window; //create window obj
 
 	if(!glfwInit()){ //init GLFW
@@ -34,6 +55,10 @@ int main(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	if (glfwRawMouseMotionSupported())
+	    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	window = glfwCreateWindow(W_WIDTH, W_HEIGHT, "OpenGL", NULL, NULL); //add context to window
 	if (!window){
@@ -49,10 +74,14 @@ int main(){
 
 	glfwSwapInterval(0); //Vsync disabled
 
+	//init glew
+
 	if(glewInit() != GLEW_OK){ //init GLEW
 		printf("could not init GLEW");
 		return -1;
 	}
+
+	//set up OpenGL settings and print version
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -63,46 +92,11 @@ int main(){
 
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
-	float positions[] = { //the vertecies for the square we want to render, as well as texture cordinates and normals
-        //back facing
-		000.0f, 000.0f, 000.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-		100.0f, 000.0f, 000.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-		100.0f, 100.0f, 000.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,
-		000.0f, 100.0f, 000.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
+	//set up a cube with texture coordinates and normals
 
-		//front facing		
-		100.0f, 000.0f, 100.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 
-		000.0f, 000.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-
-        //top
-		000.0f, 100.0f, 000.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		100.0f, 100.0f, 000.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		100.0f, 100.0f, 100.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		000.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-
-        //bottom
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,  
-		000.0f, 000.0f, 000.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-		100.0f, 000.0f, 000.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-
-		//left
-		000.0f, 000.0f, 100.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		000.0f, 000.0f, 000.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		000.0f, 100.0f, 000.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-		000.0f, 100.0f, 100.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-
-   	 	//right
-		100.0f, 000.0f, 000.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 
-		100.0f, 000.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		100.0f, 100.0f, 100.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		100.0f, 100.0f, 000.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
-	};
-
+	float positions[] = POS_TEX_NORM_CUBE; 
 	struct VertexBuffer vb;                       
-	initVertexBuffer(&vb, positions, sizeof(float) * 8 * 4 * 6);
+	initVertexBuffer(&vb, positions, POS_TEX_NORM_CUBE_BUFFER_SIZE);
 
 	struct VertexBufferLayout vbl;
 	initVertexBufferLayout(&vbl);
@@ -111,43 +105,30 @@ int main(){
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 2, GL_FALSE);
 	pushVertexBufferLayout(&vbl, GL_FLOAT, 3, GL_FALSE);
 
+	unsigned int indicies[] = POS_TEX_NORM_CUBE_INDEX;
+	struct IndexBuffer ib;
+	initIndexBuffer(&ib, indicies, POS_TEX_NORM_CUBE_INDEX_SIZE);
+
+	//create buffer of transforms for the cubes to do an instanced draw call
+
 	mat4 *transforms;
-	transforms = (mat4*)malloc(2 * sizeof(mat4));
+	transforms = (mat4*)malloc(100 * sizeof(mat4));
 
-	glm_translate_to(GLM_MAT4_IDENTITY, (vec3){150, 0, -200}, transforms[0]);
-	glm_translate_to(GLM_MAT4_IDENTITY, (vec3){-175, 0, -100}, transforms[1]);
-
+	for(int x = 0; x < 10; x++){
+		for(int y = 0; y < 10; y++){
+			glm_translate_to(GLM_MAT4_IDENTITY, (vec3){150 * x, 0, -150 * y}, transforms[(x * 10) + y]);
+		}
+	}
 
 	struct VertexBuffer ivb;
-	initVertexBuffer(&ivb, &transforms[0], 2 * sizeof(mat4));
+	initVertexBuffer(&ivb, &transforms[0], 100 * sizeof(mat4));
 
 	struct VertexBufferLayout ivbl;
 	initVertexBufferLayout(&ivbl);
 
 	pushInstancedVertexBufferMat4(&ivbl);
 
-	unsigned int indicies[] = { 
-		0, 1, 2, //front
-		2, 3, 0,
-
-		4, 5, 6, //back
-		6, 7, 4,
-
-		8, 9, 10, //top
-		10, 11, 8,
-
-		12, 13, 14, //bottom
-		14, 15, 12,
-
-		16, 17, 18, //left
-		18, 19, 16,
-
-		20, 21, 22, //right
-		22, 23, 20
-	}; 
-
-	struct IndexBuffer ib;
-	initIndexBuffer(&ib, indicies, 6 * 6);
+	//create vertex array and add our buffers to it
 
 	struct VertexArray vao;
 	initVertexArray(&vao);
@@ -155,35 +136,39 @@ int main(){
 	vertexArrayAddBuffer(&vao, &vb, &vbl);
 	vertexArrayAddBuffer(&vao, &ivb, &ivbl);
 
-	//white cube
+	//create white cube
 
 	float spositions[] = BASIC_CUBE;
 	unsigned int sindicies[] = BASIC_CUBE_INDEX;
 
 	struct IndexBuffer sib;
-	initIndexBuffer(&sib, sindicies, 6 * 6);
+	initIndexBuffer(&sib, sindicies, BASIC_CUBE_INDEX_SIZE);
 	struct VertexBuffer svb;                       
-	initVertexBuffer(&svb, spositions, sizeof(float) * 3 * 8);
+	initVertexBuffer(&svb, spositions, BASIC_CUBE_BUFFER_SIZE);
 
 	struct VertexBufferLayout svbl;
 	initVertexBufferLayout(&svbl);
 
 	pushVertexBufferLayout(&svbl, GL_FLOAT, 3, GL_FALSE);
 
+	//create the white cubes vao
+
 	struct VertexArray svao;
 	initVertexArray(&svao);
 
 	vertexArrayAddBuffer(&svao, &svb, &svbl);
 
-	//end white cube
+	//set up camera
 
-	struct Camera camera;
+	//struct Camera camera;
 	initCamera(&camera);
 
-	mat4 proj;
-    glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 100000.0f, proj);
+	//set up projection matrix
 
-	//normal shader
+	mat4 proj;
+	glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 100000.0f, proj);
+
+	//compile the shader for our white cube
 	
   	struct Shader whiteShader;
   	initShader(&whiteShader);
@@ -193,7 +178,8 @@ int main(){
   	freeShader(&whiteShader);
   	bindShader(whiteShader);
 
-	//instance shader
+	//create shader for drawing the other cubes
+
 	struct Shader instanceShader;
 	initShader(&instanceShader);
 	addShaderPath(&instanceShader, "shader/ShadedInstanceVertex.shader", GL_VERTEX_SHADER);
@@ -201,20 +187,28 @@ int main(){
 	compileShader(&instanceShader);
 	freeShader(&instanceShader);
 	bindShader(instanceShader);
+	
+	//set all the uniform settings 
 
 	shaderSetUniform1f(&instanceShader, "ambientStrength", 0.3f);
-	shaderSetUniform1f(&instanceShader, "specularStrength", 0.3f);
-	shaderSetUniform3f(&instanceShader, "lightPos", 50, 150, -125);
+	shaderSetUniform1f(&instanceShader, "specularStrength", 1.0f);
+	shaderSetUniform1f(&instanceShader, "diffuseStrength", 1.0f);
+	shaderSetUniform1f(&instanceShader, "distanceStrength", 150.0f);
+	shaderSetUniform3f(&instanceShader, "lightPos", 725.0f, 317.5f, -625.0f);
 	shaderSetUniform3f(&instanceShader, "lightColor", 1.0f, 1.0f, 1.0f);
 	shaderSetUniform3f(&instanceShader, "viewPos", 0.0f, 0.0f, 0.0f);
 
 	shaderSetUniformMat4f(&instanceShader, "projection", proj);
 	shaderSetUniformMat4f(&whiteShader, "projection", proj);
 
+	//create model matrix for the white cube
+
 	mat4 smodel;
-	glm_translate_to(GLM_MAT4_IDENTITY, (vec3){0, 100, -175}, smodel);
+	glm_translate_to(GLM_MAT4_IDENTITY, (vec3){707.5, 300, -642.5}, smodel);
 	glm_scale_uni(smodel, 0.35f);
 	shaderSetUniformMat4f(&whiteShader, "model", smodel);
+
+	//create our texture struct for the cubes
 
 	struct Texture texture;
 	initTexture(&texture, "resources/textures/source-test.jpeg");
@@ -222,8 +216,12 @@ int main(){
 
 	shaderSetUniform1i(&instanceShader, "u_Texture", 0);
 
+	//create renderer
+
 	struct Renderer renderer;
 	initRenderer(&renderer);
+	
+	//unbind everything and free up memory that is now on the GPU
 	
 	unbindVertexArray(vao);
 	unbindShader(instanceShader);
@@ -268,10 +266,12 @@ int main(){
 		} 
 		cameraUpdateViewMatrix(&camera);
 
+		//update uniforms
 		shaderSetUniformMat4f(&instanceShader, "view", camera.view);
 		shaderSetUniformMat4f(&whiteShader, "view", camera.view);
 		shaderSetUniform3f(&instanceShader, "viewPos", camera.position[0], camera.position[1], camera.position[2]);
-		rendererInstancedDraw(vao, ib, instanceShader, 2);
+		//draw objects
+		rendererInstancedDraw(vao, ib, instanceShader, 100);
 		rendererDraw(svao, sib, whiteShader);
 	}
 
