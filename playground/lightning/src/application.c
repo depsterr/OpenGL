@@ -36,8 +36,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
 	xoffset *= SENSITIVITY;
 	yoffset *= SENSITIVITY;
 
-	camera.pitch += yoffset;
-	camera.yaw += yoffset;
+	camera.pitch -= yoffset;
+	camera.yaw += xoffset;
+
+	if(camera.pitch < -89.9f){
+		camera.pitch = -89.9f;
+	}else if(camera.pitch > 89.9f){
+		camera.pitch = 89.9f;
+	}
 }
 
 int main(){
@@ -262,6 +268,11 @@ int main(){
 		if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
 			camera.yaw -= TURNSPEED * renderer.deltatime;
 		} 
+		if(camera.pitch < -89.9f){
+			camera.pitch = -89.9f;
+		}else if(camera.pitch > 89.9f){
+			camera.pitch = 89.9f;
+		}
 		cameraUpdateViewMatrix(&camera);
 
 		//update uniforms
