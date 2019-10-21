@@ -36,8 +36,7 @@ void main()
 	vec3 specular = specularStrength * spec * lightColor;
 
 	//distance
-	float lightdist = distance(lightPos, v_FragPos);
-	float viewdist  = distance(viewPos, lightPos);
+	float lightdist = distance(lightPos, v_FragPos) ;
 	lightdist = 1 / lightdist;
 	vec3 distance = distanceStrength * lightdist * lightColor;
 

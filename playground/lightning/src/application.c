@@ -12,8 +12,8 @@
 #include "shapes.h"
 
 
-#define W_WIDTH 1920
-#define W_HEIGHT 1080
+#define W_WIDTH 960
+#define W_HEIGHT 540
 #define SCREEN_RATIO ((float)((float)W_WIDTH/(float)W_HEIGHT))
 #define FOV 90.0f
 #define FARVAL 900.0f

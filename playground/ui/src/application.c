@@ -12,31 +12,12 @@
 #include "shapes.h"
 
 
-#define W_WIDTH 1920
-#define W_HEIGHT 1080
+#define W_WIDTH 960
+#define W_HEIGHT 540
 #define SCREEN_RATIO ((float)((float)W_WIDTH/(float)W_HEIGHT))
 //#define fps enable to show fps
 
 float lastX = W_WIDTH / 2, lastY = W_HEIGHT / 2;
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-	float xoffset = xpos - lastX;
-	float yoffset = ypos - lastY;
-	lastX = xpos;
-	lastY = ypos;
-
-	xoffset *= SENSITIVITY;
-	yoffset *= SENSITIVITY;
-
-	camera.pitch -= yoffset;
-	camera.yaw += xoffset;
-
-	if(camera.pitch < -89.9f){
-		camera.pitch = -89.9f;
-	}else if(camera.pitch > 89.9f){
-		camera.pitch = 89.9f;
-	}
-}
 
 int main(){
 
@@ -64,7 +45,6 @@ int main(){
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	glfwSetCursorPosCallback(window, mouse_callback);
 
 	glfwMakeContextCurrent(window); //set window to the current context
 
@@ -80,7 +60,6 @@ int main(){
 	//set up OpenGL settings and print version
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.

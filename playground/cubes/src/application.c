@@ -11,8 +11,8 @@
 #include "camera.h"
 
 
-#define W_WIDTH 1920
-#define W_HEIGHT 1080
+#define W_WIDTH 960
+#define W_HEIGHT 540
 #define SCREEN_RATIO ((float)((float)W_WIDTH/(float)W_HEIGHT))
 #define FOV 100.0f
 #define FARVAL 900.0f
@@ -115,7 +115,7 @@ int main(){
 	for(int x = 0; x < 100; x++){
 		for(int y = 0; y < 100; y++){
 			for(int z = 0; z < 100; z++){
-				glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, (vec3){150 * x, 150 * z, 150 * y}, transforms[(x * 100 * 100) + (y * 100) + z]);
+				glm_translate_to((mat4)GLM_MAT4_IDENTITY_INIT, (vec3){300 * x, 300 * z, 300 * y}, transforms[(x * 100 * 100) + (y * 100) + z]);
 			}
 		}
 	}

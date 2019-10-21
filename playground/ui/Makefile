@@ -3,7 +3,7 @@ PROJECTDIR=build/application.out
 BUILDDIR=.
 CFLAGS= -lglfw -lGLEW -lGL -lGLU -lm -lcglm -g
 
-default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o stb_image.o texture.o camera.o
+default: src/application.c vertexBuffer.o indexBuffer.o vertexArray.o renderer.o vertexBufferLayout.o shader.o stb_image.o texture.o camera.o UIelements.o
 	$(CC) -o $(PROJECTDIR) $^ $(CFLAGS)
 	make clean
 
@@ -32,6 +32,9 @@ texture.o: src/texture.c
 	$(CC) -c $^ $(CFLAGS)
 
 camera.o: src/camera.c
+	$(CC) -c $^ $(CFLAGS)
+
+UIelements.o: src/UIelements.c
 	$(CC) -c $^ $(CFLAGS)
 
 clean:
