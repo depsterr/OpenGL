@@ -10,6 +10,7 @@
 #include "cglmExtention.h"
 #include "camera.h"
 #include "shapes.h"
+#include "UIelements.h"
 
 
 #define W_WIDTH 960
@@ -65,9 +66,12 @@ int main(){
 	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
 	glDebugMessageCallback(MessageCallback, 0);
 
+	UIwindow uiwin;
+	initUIwindow(&uiwin, window, 1920, 1080, (vec3){1.0f, 1.0f, 1.0f}, "WindowName");
+
 	printf("%s\n", glGetString(GL_VERSION)); //print GL version
 
-	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && rendererLoop(&renderer, window)){
+	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS || UIwindowUpdate(uiwin)){
 #ifdef fps
 		printf("\nfps: %.2f", 1.0f / renderer.deltatime);
 #endif

@@ -14,7 +14,7 @@
 typedef struct UIshape{
 	unsigned int vertecies;
 	unsigned int* vertexbuffer;
-	int corner radius;
+	int cornerradius;
 	vec4* colors;
 	vec3* colorpositions;
 	//buffer and other stuff needed to draw shape
@@ -23,7 +23,8 @@ typedef struct UIshape{
 }UIshape;
 
 typedef struct UItext{
-	char* text; //stuff needed to render font }UItext;
+	char* text; //stuff needed to render font
+}UItext;
 
 union Data{
 	int i;
@@ -47,7 +48,7 @@ typedef struct UIwindow{
 	UIelement* elements;
 	unsigned int w_width;
 	unsigned int w_height;
-	vec4 clearcolor;
+	vec3 clearcolor;
 }UIwindow;
 
 typedef struct UI{
@@ -55,16 +56,10 @@ typedef struct UI{
 	//possibly some other stuff that would help get the stuff on the screen
 }UI;
 
-void UIwindowUpdate(UIwindow uiwin); //UIwindow to update and window to bind back to afterwards
+unsigned char UIwindowUpdate(UIwindow uiwin); //UIwindow to update and window to bind back to afterwards
 
-void initUIwindow(UIwindow* uiwin, GLFWwindow* return, unsigned int width, unsigned int height, vec3 clear); //set up all needed stuff
+void initUIwindow(UIwindow* uiwin, GLFWwindow* returnwin, unsigned int width, unsigned int height, vec3 clear, char uiname[]); //set up all needed stuff
 
 void deleteUIwindow(UIwindow* uiwin); //free up all stuff (also close first just to be sure)
-
-void openUIwindow(UIwindow* uiwin);
-
-void closeUIwindow(UIwindow* uiwin);
-
-void startUIwindow(UIwindow* uiwin, GLFWwindow* return, unsigned int width, unsigned int height, vec3 clear); //init followed by open
 
 void UIwindowAddElement(UIwindow* uiwin, UIelement);
