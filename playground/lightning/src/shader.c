@@ -63,7 +63,7 @@ void compileShader(struct Shader *shader){
 
 		char* buffer = NULL;
 		size_t len;
-		ssize_t bytes_read = getdelim( &buffer, &len, '\0', fp);
+		size_t bytes_read = getdelim( &buffer, &len, '\0', fp);
 	
 		printf("shader %d: \n\n-------------------------\n%s\n-------------------------\n\n", n, buffer);
 

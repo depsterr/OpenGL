@@ -11,7 +11,6 @@
 #include "camera.h"
 #include "shapes.h"
 
-
 #define W_WIDTH 960
 #define W_HEIGHT 540
 #define SCREEN_RATIO ((float)((float)W_WIDTH/(float)W_HEIGHT))
@@ -21,7 +20,7 @@
 #define TURNSPEED 90.0f
 #define MOVESPEED 500.0f
 #define SENSITIVITY 0.05f
-//#define fps enable to show fps
+/* #define fps enable to show fps */
 
 struct Camera camera;
 
@@ -48,11 +47,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
 
 int main(){
 
-	//init GLFW and set up settings
+	/* init GLFW and set up settings */
 
-	GLFWwindow* window; //create window obj
+	GLFWwindow* window; /* create window obj */
 
-	if(!glfwInit()){ //init GLFW
+	if(!glfwInit()){ /* init GLFW */
 		printf("could not init GLFW");
 		return -1;
 	}
@@ -62,7 +61,7 @@ int main(){
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(W_WIDTH, W_HEIGHT, "OpenGL", NULL, NULL); //add context to window
+	window = glfwCreateWindow(W_WIDTH, W_HEIGHT, "OpenGL", NULL, NULL); /* add context to window */
 	if (!window){
 		printf("could not create window");
 		glfwTerminate();
@@ -74,29 +73,29 @@ int main(){
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 
-	glfwMakeContextCurrent(window); //set window to the current context
+	glfwMakeContextCurrent(window); /* set window to the current context */
 
-	glfwSwapInterval(0); //Vsync disabled
+	glfwSwapInterval(0); /* Vsync disabled */
 
-	//init glew
+	/* init glew */
 
-	if(glewInit() != GLEW_OK){ //init GLEW
+	if(glewInit() != GLEW_OK){ /* init GLEW */
 		printf("could not init GLEW");
 		return -1;
 	}
 
-	//set up OpenGL settings and print version
+	/* set up OpenGL settings and print version */
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEBUG_OUTPUT); // probably the greatest thing ever.
+	glEnable(GL_DEBUG_OUTPUT); /*  probably the greatest thing ever. */
 	glDebugMessageCallback(MessageCallback, 0);
 
-	printf("%s\n", glGetString(GL_VERSION)); //print GL version
+	printf("%s\n", glGetString(GL_VERSION)); /* print GL version */
 
-	//set up a cube with texture coordinates and normals
+	/* set up a cube with texture coordinates and normals */
 
 	float positions[] = POS_TEX_NORM_CUBE; 
 	struct VertexBuffer vb;                       
@@ -113,7 +112,7 @@ int main(){
 	struct IndexBuffer ib;
 	initIndexBuffer(&ib, indicies, POS_TEX_NORM_CUBE_INDEX_SIZE);
 
-	//create buffer of transforms for the cubes to do an instanced draw call
+	/* create buffer of transforms for the cubes to do an instanced draw call */
 
 	mat4 *transforms;
 	transforms = (mat4*)malloc(100 * sizeof(mat4));
@@ -132,7 +131,7 @@ int main(){
 
 	pushInstancedVertexBufferMat4(&ivbl);
 
-	//create vertex array and add our buffers to it
+	/* create vertex array and add our buffers to it */
 
 	struct VertexArray vao;
 	initVertexArray(&vao);
@@ -140,7 +139,7 @@ int main(){
 	vertexArrayAddBuffer(&vao, &vb, &vbl);
 	vertexArrayAddBuffer(&vao, &ivb, &ivbl);
 
-	//create white cube
+	/* create white cube */
 
 	float spositions[] = BASIC_CUBE;
 	unsigned int sindicies[] = BASIC_CUBE_INDEX;
@@ -155,24 +154,24 @@ int main(){
 
 	pushVertexBufferLayout(&svbl, GL_FLOAT, 3, GL_FALSE);
 
-	//create the white cubes vao
+	/* create the white cubes vao */
 
 	struct VertexArray svao;
 	initVertexArray(&svao);
 
 	vertexArrayAddBuffer(&svao, &svb, &svbl);
 
-	//set up camera
+	/* set up camera */
 
-	//struct Camera camera;
+	/* struct Camera camera; */
 	initCamera(&camera);
 
-	//set up projection matrix
+	/* set up projection matrix */
 
 	mat4 proj;
 	glm_perspective(90.0f, SCREEN_RATIO, 0.01f, 100000.0f, proj);
 
-	//compile the shader for our white cube
+	/* compile the shader for our white cube */
 	
   	struct Shader whiteShader;
   	initShader(&whiteShader);
@@ -182,7 +181,7 @@ int main(){
   	freeShader(&whiteShader);
   	bindShader(whiteShader);
 
-	//create shader for drawing the other cubes
+	/* create shader for drawing the other cubes */
 
 	struct Shader instanceShader;
 	initShader(&instanceShader);
@@ -192,7 +191,7 @@ int main(){
 	freeShader(&instanceShader);
 	bindShader(instanceShader);
 	
-	//set all the uniform settings 
+	/* set all the uniform settings  */
 
 	shaderSetUniform1f(&instanceShader, "ambientStrength", 0.3f);
 	shaderSetUniform1f(&instanceShader, "specularStrength", 1.0f);
@@ -205,14 +204,14 @@ int main(){
 	shaderSetUniformMat4f(&instanceShader, "projection", proj);
 	shaderSetUniformMat4f(&whiteShader, "projection", proj);
 
-	//create model matrix for the white cube
+	/* create model matrix for the white cube */
 
 	mat4 smodel;
 	glm_translate_to(GLM_MAT4_IDENTITY, (vec3){707.5, 300, -642.5}, smodel);
 	glm_scale_uni(smodel, 0.35f);
 	shaderSetUniformMat4f(&whiteShader, "model", smodel);
 
-	//create our texture struct for the cubes
+	/* create our texture struct for the cubes */
 
 	struct Texture texture;
 	initTexture(&texture, "resources/textures/source-test.jpeg");
@@ -220,12 +219,12 @@ int main(){
 
 	shaderSetUniform1i(&instanceShader, "u_Texture", 0);
 
-	//create renderer
+	/* create renderer */
 
 	struct Renderer renderer;
 	initRenderer(&renderer);
 	
-	//unbind everything and free up memory that is now on the GPU
+	/* unbind everything and free up memory that is now on the GPU */
 	
 	unbindVertexArray(vao);
 	unbindShader(instanceShader);
@@ -236,7 +235,7 @@ int main(){
 #ifdef fps
 		printf("\nfps: %.2f", 1.0f / renderer.deltatime);
 #endif
-		//wasd
+		/* wasd */
 		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
 			cameraMoveRelativeZ(&camera, MOVESPEED * renderer.deltatime);
 		}
@@ -250,12 +249,12 @@ int main(){
 			cameraMoveRelativeX(&camera, -MOVESPEED * renderer.deltatime);
 		} 
 
-		//reset
+		/* reset */
 		if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
 			initCamera(&camera);
 		}
 
-		//arrow camera
+		/* arrow camera */
 		if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
 			camera.pitch += TURNSPEED * renderer.deltatime;
 		}
@@ -275,14 +274,14 @@ int main(){
 		}
 		cameraUpdateViewMatrix(&camera);
 
-		//update uniforms
+		/* update uniforms */
 		shaderSetUniformMat4f(&instanceShader, "view", camera.view);
 		shaderSetUniformMat4f(&whiteShader, "view", camera.view);
 		shaderSetUniform3f(&instanceShader, "viewPos", camera.position[0], camera.position[1], camera.position[2]);
-		//draw objects
+		/* draw objects */
 		rendererInstancedDraw(vao, ib, instanceShader, 100);
 		rendererDraw(svao, sib, whiteShader);
 	}
 
-	glfwTerminate(); //kill GLFW
+	glfwTerminate(); /* kill GLFW */
 }

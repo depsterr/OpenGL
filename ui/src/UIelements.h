@@ -38,7 +38,9 @@ union Data{
 
 typedef struct UIelement{
 	UIshape* shapes;
+	unsigned short shapeCount;
 	UItext* texts;
+	unsigned short textCount;
 	union Data data;
 }UIelement;
 
@@ -46,6 +48,7 @@ typedef struct UIwindow{
 	GLFWwindow* window;
 	GLFWwindow* returnwindow;
 	UIelement* elements;
+	unsigned int elementCount;
 	unsigned int w_width;
 	unsigned int w_height;
 	vec3 clearcolor;
@@ -58,8 +61,18 @@ typedef struct UI{
 
 unsigned char UIwindowUpdate(UIwindow uiwin); //UIwindow to update and window to bind back to afterwards
 
+void UIwindowDraw(UIwindow uiwin);
+
+void UIelementDraw(UIelement uiele);
+
+void UIshapeDraw(UIelement uiele);
+
+void UItextDraw(UItext uitxt);
+
 void initUIwindow(UIwindow* uiwin, GLFWwindow* returnwin, unsigned int width, unsigned int height, vec3 clear, char uiname[]); //set up all needed stuff
 
 void deleteUIwindow(UIwindow* uiwin); //free up all stuff (also close first just to be sure)
 
 void UIwindowAddElement(UIwindow* uiwin, UIelement);
+
+void UIelementAddShape(UIelement* uiele, UIshape);

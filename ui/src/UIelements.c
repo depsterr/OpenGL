@@ -59,8 +59,26 @@ unsigned char UIwindowUpdate(UIwindow uiwin){
 	glfwMakeContextCurrent(uiwin.window);
 	glClearColor(uiwin.clearcolor[0], uiwin.clearcolor[1], uiwin.clearcolor[2], 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	UIwindowDraw(uiwin);
 	glfwSwapBuffers(uiwin.window); //swap the buffer
 	glfwPollEvents(); //poll for events
 	glfwMakeContextCurrent(uiwin.returnwindow);
 	return 1;
 }
+
+void UIwindowDraw(UIwindow uiwin){
+	for(unsigned int element; element < uiwin.elementCount; element++){
+		for(unsigned int text; text < uiwin.elements[element].textCount; text++){
+			
+		}
+		for(unsigned int shape; shape < uiwin.elements[element].shapeCount; shape++){
+			
+		}
+	}
+}
+
+void UIelementDraw(UIelement uiele);
+
+void UIshapeDraw(UIelement uiele);
+
+void UItextDraw(UItext uitxt);
